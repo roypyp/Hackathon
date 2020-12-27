@@ -6,7 +6,8 @@ print("Server started, listening on IP address 172.1.0.36")
 s = socket(AF_INET, SOCK_DGRAM)
 
 
-msg = bytes(gethostbyname(gethostname()),"utf-8")
+msg = b'\xfe\xed\xbe\xef\x02\x25\x13'
+#bytes(gethostbyname(gethostname()),"utf-8")
 while True:
     #s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
