@@ -2,6 +2,7 @@ import socket
 
 print("Client started, listening for offer requests....")
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#s2= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(('',13117))
@@ -16,11 +17,12 @@ try:
         print("wrong broadcast")
     port_num=int(hex(message[5])[2:]+hex(message[6])[2:])
     print(port_num)
+    
 except (KeyboardInterrupt,SystemExit):
     raise
 
-
-
+#s.connect((address[0], port_num))
+#s.sendall(bytes(teamname,"utf-8"))
 
 
 # s.connect((socket.gethostname(), 1234))
