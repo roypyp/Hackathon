@@ -14,7 +14,7 @@ def listenT(s):
         conn, addr = s.accept()
         data = conn.recv(1024)
         teamsdict[addr]=[conn,data.decode("utf-8")]
-        print(data.decode("utf-8"))
+        #print(data.decode("utf-8"))
         #_thread.start_new_thread(listenT,())
 def broadCast():
     s = socket(AF_INET, SOCK_DGRAM)
@@ -32,12 +32,12 @@ def gameStart(s,inx,a,flag):
     while True:
         if(flag[0]):
             break
-        print("!")
+        #print("!")
         s.sendall(bytes("mssage","utf-8"))
         data=s.recv(1024)
         if(data.decode("utf-8")=="press"):
             a[inx]+=1
-            print (a)
+            #print (a)
     s.sendall(bytes("end","utf-8"))
 
 
