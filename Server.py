@@ -6,13 +6,12 @@ import select
 teamsdict={}
 def listenT(s):
     global teamsdict
-    print(startTime)
+    startTime=time.time()
     while True:
         readable, writeable, erro = select.select([s],[],[],startTime+10-time.time())
         if len(readable)<=0:
             break
         conn, addr = s.accept()
-        print("hey")
         data = conn.recv(1024)
         teamsdict[addr]=[conn,data.decode("utf-8")]
         print(data.decode("utf-8"))
@@ -28,8 +27,53 @@ def broadCast():
         s.sendto(msg, ('<broadcast>', 13217))
         time.sleep(1)
 
+
+def gameStart(s,inx,a,flag):
+    
+    while True:
+        if(flag[0]):
+            break
+        print("!")
+        s.sendall(bytes("mssage","utf-8"))
+        data=s.recv(1024)
+        if(data.decode("utf-8")=="press"):
+            a[inx]+=1
+            print (a)
+    s.sendall(bytes("end","utf-8"))
+
+
 def KSBR():
     global teamsdict
+    flagG=0
+    group1=[]
+    group2=[]
+    for key in teamsdict.keys():
+        if(flagG==0):
+            group1.append([key,teamsdict[key][1]])
+            flagG=1
+        else:
+            group2.append([key,teamsdict[key][1]])
+            flagG=0
+    mssage="Welcome to Keyboard Spamming Battle Royale.\n"
+    mssage+="Group 1:\n==\n"
+    for team in group1:
+        mssage+=team[1]+"\n"
+    for team in group2:
+        mssage+=team[1]+"\n"
+    mssage+="Start pressing keys on your keyboard as fast as you can!!"
+    for key in teamsdict.keys():
+        s=teamsdict[key][0]
+        s.sendall(bytes(mssage,"utf-8"))
+    a=[0]*len(teamsdict)
+    inx=0
+    flag=[False]
+    for key in teamsdict.keys():
+        _thread.start_new_thread(gameStart,(teamsdict[key][0],inx,a,flag))
+        inx+=1
+    time.sleep(10)
+    flag[0]=True
+    time.sleep(1)
+
 
 
 s = socket(AF_INET, SOCK_STREAM)
@@ -39,6 +83,8 @@ s.listen()
 while True:
     _thread.start_new_thread(broadCast,())
     _thread.start_new_thread(listenT,(s,))
+    time.sleep(11)
+    KSBR()
     time.sleep(11)
 
 

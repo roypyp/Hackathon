@@ -1,4 +1,7 @@
 import socket
+import getch
+
+
 
 print("Client started, listening for offer requests....")
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -19,6 +22,20 @@ try:
     print(port_num)
     s2.connect(("172.1.0."+address[0].split(".")[3], port_num))
     s2.sendall(bytes(teamname,"utf-8"))
+    data=s2.recv(10104)
+    print(data.decode("utf-8"))
+    while True:
+        data=s2.recv(1024)
+        print(data.decode("utf-8"))
+        if(data.decode("utf-8")=="mssage"):
+            a=getch.getch()
+            s2.sendall(bytes("press","utf-8"))
+            print(a)
+        elif(data.decode("utf-8")=="end"):
+            break
+
+                
+
     
 except (KeyboardInterrupt,SystemExit):
     raise
