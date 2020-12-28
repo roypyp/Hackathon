@@ -17,7 +17,6 @@ def listenT(s):
         print(data.decode("utf-8"))
         #_thread.start_new_thread(listenT,())
 def broadCast():
-    print("Server started, listening on IP address ", "172.1.0."+gethostbyname(gethostname()).split(".")[3])
     s = socket(AF_INET, SOCK_DGRAM)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
     msg = b'\xfe\xed\xbe\xef\x02\x25\x13'
@@ -73,19 +72,50 @@ def KSBR():
     time.sleep(10)
     flag[0]=True
     time.sleep(1)
+    group1point=0
+    group2point=0
+    flagG=0
+    for i in range(len(a)):
+        if(flagG==0):
+            group1point+=a[i]
+            flagG=1
+        else:
+            group2point+=a[i]
+            flagG=0
+    fmssage="Group 1 typed in "+ str(group1point)+" characters. Group 2 typed in " + str(group2point) +" characters.\n"
+    if group1point>=group2point:
+        fmssage+="Group 1 wins!\n\n"
 
+        fmssage+="Congratulations to the winners:\n==\n"
+        for team in group1:
+            fmssage+=team[1]+"\n"
+    else:
+        fmssage+="Group 2 wins!\n\n"
+
+        fmssage+="Congratulations to the winners:\n==\n"
+        for team in group2:
+            fmssage+=team[1]+"\n"
+    for key in teamsdict.keys():
+        s=teamsdict[key][0]
+        s.sendall(bytes(fmssage,"utf-8"))
+    for key in teamsdict.keys():
+        s=teamsdict[key][0]
+        s.recv(1024)
+        s.close()
 
 
 s = socket(AF_INET, SOCK_STREAM)
 s.bind(("172.1.0."+gethostbyname(gethostname()).split(".")[3], 9491))
 s.listen()
-
+print("Server started, listening on IP address ", "172.1.0."+gethostbyname(gethostname()).split(".")[3])
 while True:
     _thread.start_new_thread(broadCast,())
     _thread.start_new_thread(listenT,(s,))
     time.sleep(11)
     KSBR()
-    time.sleep(11)
+    print("Server disconnected, listening for offer requests...")
+    time.sleep(1)
+    teamsdict={}
 
 
 
