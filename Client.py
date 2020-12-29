@@ -1,8 +1,13 @@
 import socket
 import getch
 import time
+import sys
+import select
+import tty
+import termios
 
-
+def isData():
+    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 print("Client started, listening for offer requests....")
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #s2= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,13 +30,26 @@ while True:
         s2.sendall(bytes(teamname,"utf-8"))
         data=s2.recv(10104)
         print(data.decode("utf-8"))
-        while True:
+        '''while True:
             data=s2.recv(1024)
             if(data.decode("utf-8")=="mssage"):
                 a=getch.getch()
                 s2.sendall(bytes("press","utf-8"))
             elif(data.decode("utf-8")=="end"):
-                break
+                break'''
+        starttime=time.time()
+        old_settings = termios.tcgetattr(sys.stdin)
+        try:
+            tty.setcbreak(sys.stdin.fileno())
+            while 1:
+                if time.time()-starttime>= 10:      
+                    break
+                if isData():
+                    c = sys.stdin.read(1)
+                    s2.sendall(bytes("press","utf-8"))
+                
+        finally:
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
         print("Game over!")
         data=s2.recv(10104)
         print(data.decode("utf-8"))  

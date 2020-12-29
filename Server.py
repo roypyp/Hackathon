@@ -33,12 +33,12 @@ def gameStart(s,inx,a,flag):
         if(flag[0]):
             break
         #print("!")
-        s.sendall(bytes("mssage","utf-8"))
+        #s.sendall(bytes("mssage","utf-8"))
         data=s.recv(1024)
         if(data.decode("utf-8")=="press"):
             a[inx]+=1
             #print (a)
-    s.sendall(bytes("end","utf-8"))
+    #s.sendall(bytes("end","utf-8"))
 
 
 def KSBR():
@@ -57,6 +57,7 @@ def KSBR():
     mssage+="Group 1:\n==\n"
     for team in group1:
         mssage+=team[1]+"\n"
+    mssage+="Group 2:\n==\n"
     for team in group2:
         mssage+=team[1]+"\n"
     mssage+="Start pressing keys on your keyboard as fast as you can!!"
@@ -71,7 +72,7 @@ def KSBR():
         inx+=1
     time.sleep(10)
     flag[0]=True
-    time.sleep(1)
+    time.sleep(0.2)
     group1point=0
     group2point=0
     flagG=0
