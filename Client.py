@@ -22,8 +22,9 @@ while True:
         s2= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         message, address = s.recvfrom(10104)
         print( "Received offer from ",address[0] ,",attempting to connect...")
-        if(message[0:5]!=cha[0:5]):
+        if(message[0:4]!=cha[0:4]):
             print("wrong broadcast")
+            continue
         port_num=int(hex(message[5])[2:]+hex(message[6])[2:],16)
         print(port_num)
         s2.connect(("172.1.0."+address[0].split(".")[3], port_num))
