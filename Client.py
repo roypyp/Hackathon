@@ -6,22 +6,16 @@ import select
 import tty
 import termios
 import _thread
+import multiprocessing
+
 
 def isData():
     return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 def test(s2):
-    starttime=time.time()
-    #old_settings = termios.tcgetattr(sys.stdin)
     try:
-        #tty.setcbreak(sys.stdin.fileno())
         while 1:
-            if time.time()-starttime>= 10:      
-                break
             a=getch.getch()
-            s2.sendall(bytes("press","utf-8"))
-            '''if isData():
-                c = sys.stdin.read(1)
-                s2.sendall(bytes("press","utf-8"))   '''   
+            s2.sendall(bytes("press","utf-8"))   
     except(KeyboardInterrupt,SystemExit):
         print("bob")
 print("Client started, listening for offer requests....")
@@ -37,7 +31,7 @@ while True:
     try:
         s2= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         message, address = s.recvfrom(10104)
-        print( "Received offer from ","172.1.0.",address[0].split(".")[3] ,",attempting to connect...")
+        print( "Received offer from ","172.1.0."+address[0].split(".")[3] ,",attempting to connect...")
         if(message[0:4]!=cha[0:4]):
             print("wrong broadcast")
             continue
@@ -67,14 +61,19 @@ while True:
                 
         finally:
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)'''
-        _thread.start_new_thread(test,(s2,))
-        time.sleep(10.5)
+        #_thread.start_new_thread(test,(s2,))
+        p = multiprocessing.Process(target=test, name="test", args=(s2,))
+        p.start()
+        time.sleep(10.2)
+        p.terminate()
+        p.join()
+        #test(s2)
         print("Game over!")
         data=s2.recv(10104)
         print(data.decode("utf-8"))  
         print("Game over, sending out offer requests...")
         s2.close()
-        time.sleep(2)
+        time.sleep(0.2)
         s2=None
     except (KeyboardInterrupt,SystemExit):
         raise
