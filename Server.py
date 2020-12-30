@@ -35,8 +35,8 @@ def gameStart(s,inx,a,flag):
         #print("!")
         #s.sendall(bytes("mssage","utf-8"))
         data=s.recv(1024)
-        if(data.decode("utf-8")=="press"):
-            a[inx]+=1
+        #if(data.decode("utf-8")=="press"):
+        a[inx]+=1
             #print (a)
     #s.sendall(bytes("end","utf-8"))
 
