@@ -4,7 +4,7 @@ import _thread
 import select
 
 teamsdict={}
-
+#litsen for TSP massage
 def listenT(s):
     global teamsdict
     startTime=time.time()
@@ -17,20 +17,20 @@ def listenT(s):
         teamsdict[addr]=[conn,data.decode("utf-8")]
       
 
-
+#send broadcast offer
 def broadCast():
     s = socket(AF_INET, SOCK_DGRAM)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-
+    portBC=13117
     #The broadcast message
     msg = b'\xfe\xed\xbe\xef\x02\x25\x13'
     
     for i in range(10):
-        s.sendto(msg, ('<broadcast>', 13117))
+        s.sendto(msg, ('<broadcast>', portBC))
         time.sleep(1)
 
 
-
+#game start to listen to clint key smashing
 def gameStart(s,inx,a,flag):
     while True:
         if(flag[0]):
@@ -39,7 +39,7 @@ def gameStart(s,inx,a,flag):
         a[inx]+=1
    
 
-
+#split to group send the massage and start thread for each client 
 def KSBR():
     global teamsdict
     flagG=0
@@ -128,12 +128,15 @@ s.bind(("172.1.0."+gethostbyname(gethostname()).split(".")[3], 9491))
 s.listen()
 print("Server started, listening on IP address ", "172.1.0."+gethostbyname(gethostname()).split(".")[3])
 while True:
-    _thread.start_new_thread(broadCast,())
-    _thread.start_new_thread(listenT,(s,))
-    time.sleep(11)
-    KSBR()
-    print("Server disconnected, listening for offer requests...")
-    time.sleep(1)
-    teamsdict={}
+    try:
+        _thread.start_new_thread(broadCast,())
+        _thread.start_new_thread(listenT,(s,))
+        time.sleep(11)
+        KSBR()
+        print("Server disconnected, listening for offer requests...")
+        time.sleep(1)
+        teamsdict={}
+    except:
+        print("code fall")
 
 
